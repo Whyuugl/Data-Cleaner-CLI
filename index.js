@@ -15,6 +15,8 @@ if (!command || command === '--help') {
     console.log('  node index.js clean <teks> - Merapikan spasi berlebih');
     console.log('  node index.js format-json <path> - Merapikan format file JSON');
     console.log('  node index.js json-to-csv <path> - Mengonversi file JSON ke CSV');
+    console.log('  node index.js csv-to-json <path> - Mengonversi file CSV ke JSON');
+    console.log('  node index.js mask-data <email/phone> - Menyamarkan data sensitif');
     console.log('  node index.js --help - Menampilkan bantuan\n');
 } else if (command === 'greet') {
     const name = args[1] || 'Developer';
@@ -75,7 +77,7 @@ if (!command || command === '--help') {
           for (const row of dataArray) {
             const values = headers.map(header => {
               const val = row[header] !== undefined ? row[header] : '';
-              return `"${val}"`; // Bungkus dengan tanda petik agar aman dari koma
+              return `"${val}"`;
             });
             csvRows.push(values.join(','));
           }
@@ -96,6 +98,90 @@ if (!command || command === '--help') {
         console.log('\n❌ Gagal memproses file JSON!\n');
       }
     }
+} else if (command === 'csv-to-json') {
+  // Gunakan args[1] karena sudah di-slice(2)
+  const filePath = args[1];
+  
+  if (!filePath) {
+    console.log('\n❌ Harap masukkan file CSV! Contoh: node index.js csv-to-json sample.csv\n');
+  } else if (!fs.existsSync(filePath)) {
+    console.log(`\n❌ File "${filePath}" tidak ditemukan!\n`);
+  } else {
+    try {
+      const fileData = fs.readFileSync(filePath, 'utf8');
+      const lines = fileData.split(/\r?\n/).filter(line => line.trim() !== '');
+  
+      if (lines.length < 2) {
+        console.log('\n❌ File CSV harus memiliki minimal 1 baris header dan 1 baris data!\n');
+      } else {
+        const headers = lines[0].split(',').map(header => header.trim().replace(/^"|"$/g, ''));
+        const result = [];
+  
+        for (let i = 1; i < lines.length; i++) {
+          // Ganti lines[0] menjadi lines[i]
+          const currentLine = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+          const obj = {};
+  
+          headers.forEach((header, index) => {
+            obj[header] = currentLine[index] !== undefined ? currentLine[index] : '';
+          });
+  
+          result.push(obj);
+        }
+          
+        const jsonContent = JSON.stringify(result, null, 2);
+  
+        const outputFilePath = filePath.replace('.csv', '.json');
+        fs.writeFileSync(outputFilePath, jsonContent, 'utf8');
+
+        console.log(`\n✅ Berhasil mengonversi CSV ke JSON!`);
+        console.log(`📁 File tersimpan di: ${outputFilePath}\n`);
+        console.log('--- Isi File JSON ---');
+        console.log(jsonContent);
+        console.log('\n');
+      }
+    } catch (error) {
+      console.log('\n❌ Gagal memproses file CSV!\n');
+    }
+  }
+} else if (command === 'mask-data') {
+  const input = args[1];
+
+  if (!input) {
+    console.log('\n❌ Harap masukkan email atau nomor telepon! Contoh: node index.js mask-data user@email.com\n');
+  } else {
+    let maskedResult = input;
+
+    // Jika input berupa Email
+    if (input.includes('@')) {
+      const parts = input.split('@');
+      const name = parts[0];
+      const domain = parts[1];
+
+      if (name.length <= 2) {
+        maskedResult = `${name[0]}*@${domain}`;
+      } else {
+        const maskedName = name[0] + '*'.repeat(name.length - 2) + name[name.length - 1];
+        maskedResult = `${maskedName}@${domain}`;
+      }
+    } 
+    // Jika input berupa Nomor Telepon/Angka
+    else {
+      const cleanNumber = input.replace(/\D/g, ''); // Ambil digit angka saja
+      if (cleanNumber.length >= 8) {
+        const prefix = cleanNumber.slice(0, 4);
+        const suffix = cleanNumber.slice(-4);
+        const middleMask = '*'.repeat(cleanNumber.length - 8);
+        maskedResult = `${prefix}${middleMask}${suffix}`;
+      } else {
+        maskedResult = '*'.repeat(cleanNumber.length);
+      }
+    }
+
+    console.log('\n✅ Hasil Anonymize Data:');
+    console.log(`Teks Asli   : ${input}`);
+    console.log(`Hasil Mask  : ${maskedResult}\n`);
+  }
 } else {
-    console.log(`\n❌ Perintah "${command}" tidak dikenali. Gunakan --help untuk bantuan.\n`);
+  console.log(`\n❌ Perintah "${command}" tidak dikenali. Gunakan --help untuk bantuan.\n`);
 }
