@@ -17,6 +17,8 @@ if (!command || command === '--help') {
     console.log('  node index.js json-to-csv <path> - Mengonversi file JSON ke CSV');
     console.log('  node index.js csv-to-json <path> - Mengonversi file CSV ke JSON');
     console.log('  node index.js mask-data <email/phone> - Menyamarkan data sensitif');
+    console.log('  node index.js validate-email <email> - Memvalidasi email');
+    console.log('  node index.js clean-phone <phone> - Membersihkan nomor telepon');
     console.log('  node index.js --help - Menampilkan bantuan\n');
 } else if (command === 'greet') {
     const name = args[1] || 'Developer';
@@ -181,6 +183,33 @@ if (!command || command === '--help') {
     console.log('\n✅ Hasil Anonymize Data:');
     console.log(`Teks Asli   : ${input}`);
     console.log(`Hasil Mask  : ${maskedResult}\n`);
+  }
+} else if (command === 'validate-email') {
+  const email = args[1];
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!email) {
+    console.log('\n❌ Harap masukkan email! Contoh: node index.js validate-email user@email.com\n');
+  } else if (!regex.test(email)) {
+    console.log(`\n❌ Email ${email} tidak valid! Contoh: user@email.com\n`);
+  } else {
+    console.log(`\n✅ Email ${email} valid!\n`);
+  }
+} else if (command === 'clean-phone') {
+  const phone = args[1];
+
+  if (!phone) {
+    console.log('\n❌ Harap masukkan nomor telepon! Contoh: node index.js clean-phone 081234567890\n');
+  } else {
+    let cleaned = phone.replace(/\D/g, '');
+    
+    if (cleaned.startsWith('62')) {
+      cleaned = '0' + cleaned.slice(2);
+    }
+
+    console.log('\n✅ Hasil Bersih Nomor Telepon:');
+    console.log(`Nomor Asli   : ${phone}`);
+    console.log(`Hasil Bersih : ${cleaned}\n`);
   }
 } else {
   console.log(`\n❌ Perintah "${command}" tidak dikenali. Gunakan --help untuk bantuan.\n`);
