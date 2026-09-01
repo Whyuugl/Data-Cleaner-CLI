@@ -1,1 +1,17 @@
-{"name":"Wahyu","role":"Developer","skills":["JavaScript","Node.js","React"],"status":"active"}
+[
+  {
+    "nama": "Wahyu",
+    "role": "Developer",
+    "lokasi": "Indonesia"
+  },
+  {
+    "nama": "Budi",
+    "role": "Designer",
+    "lokasi": "Jakarta"
+  },
+  {
+    "nama": "Siti",
+    "role": "Project Manager",
+    "lokasi": "Bandung"
+  }
+]
