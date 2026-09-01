@@ -19,6 +19,8 @@ if (!command || command === '--help') {
     console.log('  node index.js mask-data <email/phone> - Menyamarkan data sensitif');
     console.log('  node index.js validate-email <email> - Memvalidasi email');
     console.log('  node index.js clean-phone <phone> - Membersihkan nomor telepon');
+    console.log('  node index.js transform-case <mode> <teks> - Mengubah format huruf (uppercase/lowercase/titlecase)');
+    console.log('  node index.js export-log <pesan> - Menyimpan catatan aktivitas ke activity.log');
     console.log('  node index.js --help - Menampilkan bantuan\n');
 } else if (command === 'greet') {
     const name = args[1] || 'Developer';
@@ -210,6 +212,42 @@ if (!command || command === '--help') {
     console.log('\n✅ Hasil Bersih Nomor Telepon:');
     console.log(`Nomor Asli   : ${phone}`);
     console.log(`Hasil Bersih : ${cleaned}\n`);
+  }
+} else if (command === 'transform-case') {
+  const mode = args[1];
+  const text = args.slice(2).join(' ');
+
+  if (!mode || !text) {
+    console.log('\n❌ Harap masukkan mode dan teks! Contoh: node index.js transform-case uppercase "Hello World"\n');
+  } else {
+    let result = text;
+    if (mode === 'uppercase') {
+      result = text.toUpperCase();
+    } else if (mode === 'lowercase') {
+      result = text.toLowerCase();
+    } else if (mode === 'titlecase') {
+      result = text.toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
+    } else {
+      console.log('\n❌ Mode transformasi tidak valid! Gunakan: uppercase, lowercase, atau capitalize\n');
+      return;
+    }
+    console.log('\n✅ Hasil Transformasi Case:');
+    console.log(`Mode : ${mode}`);
+    console.log(`Hasil : ${result}\n`);
+  }
+} else if (command === 'export-log') {
+  const logMessage = args.slice(1).join(' ');
+
+  if (!logMessage) {
+    console.log('\n❌ Harap masukkan pesan log! Contoh: node index.js export-log "Pembersihan data selesai"\n');
+  } else {
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${logMessage}\n`;
+
+    fs.appendFileSync('activity.log', logEntry, 'utf8');
+
+    console.log('\n✅ Pesan log berhasil disimpan ke activity.log\n');
+    console.log(`Content: ${logEntry}`);
   }
 } else {
   console.log(`\n❌ Perintah "${command}" tidak dikenali. Gunakan --help untuk bantuan.\n`);
