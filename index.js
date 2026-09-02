@@ -21,6 +21,8 @@ if (!command || command === '--help') {
     console.log('  node index.js clean-phone <phone> - Membersihkan nomor telepon');
     console.log('  node index.js transform-case <mode> <teks> - Mengubah format huruf (uppercase/lowercase/titlecase)');
     console.log('  node index.js export-log <pesan> - Menyimpan catatan aktivitas ke activity.log');
+    console.log('  node index.js data-stats <path> - Menampilkan analisis statistik file (baris/kata/karakter)');
+    console.log('  node index.js remove-duplicates <path> - Menghapus baris data yang duplikat');
     console.log('  node index.js --help - Menampilkan bantuan\n');
 } else if (command === 'greet') {
     const name = args[1] || 'Developer';
@@ -248,6 +250,44 @@ if (!command || command === '--help') {
 
     console.log('\n✅ Pesan log berhasil disimpan ke activity.log\n');
     console.log(`Content: ${logEntry}`);
+  }
+} else if (command === 'data-stats') {
+  const filePath = args[1];
+
+  if (!filePath) {
+    console.log('\n❌ Harap masukkan file! Contoh: node index.js data-stats data.json\n');
+  } else if (!fs.existsSync(filePath)) {
+    console.log(`\n❌ File "${filePath}" tidak ditemukan!\n`);
+  } else {
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const lines = fileContent.split(/\r?\n/).length;
+    const words = fileContent.trim().split(/\s+/).filter(Boolean).length;
+    const chars = fileContent.length;
+
+    console.log('\n📊 Statistik File Data:');
+    console.log(`Jumlah Baris    : ${lines}`);
+    console.log(`Jumlah Kata     : ${words}`);
+    console.log(`Jumlah Karakter : ${chars}\n`);
+  }
+} else if (command === 'remove-duplicates') {
+  const filePath = args[1];
+
+  if (!filePath) {
+    console.log('\n❌ Harap masukkan file! Contoh: node index.js remove-duplicates data.json\n');
+  } else if (!fs.existsSync(filePath)) {
+    console.log(`\n❌ File "${filePath}" tidak ditemukan!\n`);
+  } else {
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const lines = fileContent.split(/\r?\n/);
+    const uniqueLines = [...new Set(lines)];
+
+    const cleanedContent = uniqueLines.join('\n');
+    fs.writeFileSync(filePath, cleanedContent, 'utf8');
+
+    console.log(`\n✅ Berhasil menghapus duplikat dari file "${filePath}"\n`);
+    console.log(`Baris Awal  : ${lines.length}`);
+    console.log(`Baris Unik  : ${uniqueLines.length}`);
+    console.log(`Dihapus     : ${lines.length - uniqueLines.length} baris duplikat\n`);
   }
 } else {
   console.log(`\n❌ Perintah "${command}" tidak dikenali. Gunakan --help untuk bantuan.\n`);
