@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "nama": "Wahyu 1",
+    "role": "Data Analyst",
+    "email": "wahyu1@example.com"
+  },
+  {
+    "id": 2,
+    "nama": "Rian 2",
+    "role": "Data Analyst",
+    "email": "rian2@example.com"
+  },
+  {
+    "id": 3,
+    "nama": "Wahyu 3",
+    "role": "Designer",
+    "email": "wahyu3@example.com"
+  }
+]
