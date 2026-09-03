@@ -23,6 +23,8 @@ if (!command || command === '--help') {
     console.log('  node index.js export-log <pesan> - Menyimpan catatan aktivitas ke activity.log');
     console.log('  node index.js data-stats <path> - Menampilkan analisis statistik file (baris/kata/karakter)');
     console.log('  node index.js remove-duplicates <path> - Menghapus baris data yang duplikat');
+    console.log('  node index.js search-data <path> <keyword> - Mencari kata kunci di dalam file teks/CSV');
+    console.log('  node index.js gen-dummy <type> <jumlah> - Membuat file JSON data dummy untuk testing');
     console.log('  node index.js --help - Menampilkan bantuan\n');
 } else if (command === 'greet') {
     const name = args[1] || 'Developer';
@@ -47,9 +49,7 @@ if (!command || command === '--help') {
         } else {
             try {
                 const fileData = fs.readFileSync(filePath, 'utf8');
-
                 const parsedJson = JSON.parse(fileData);
-
                 const prettyJson = JSON.stringify(parsedJson, null, 2);
 
                 console.log('\n✅ Hasil Format JSON Rapi:\n');
@@ -289,6 +289,48 @@ if (!command || command === '--help') {
     console.log(`Baris Unik  : ${uniqueLines.length}`);
     console.log(`Dihapus     : ${lines.length - uniqueLines.length} baris duplikat\n`);
   }
+} else if (command === 'search-data') {
+  const filePath = args[1];
+  const keyword = args[2];
+
+  if (!filePath || !keyword) {
+    console.log('\n❌ Harap masukkan file dan kata kunci! Contoh: node index.js search-data data.json "kata kunci"\n');
+  } else if (!fs.existsSync(filePath)) {
+    console.log(`\n❌ File "${filePath}" tidak ditemukan!\n`);
+  } else {
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const lines = fileContent.split(/\r?\n/);
+    const matches = lines.filter((line, index) => {
+      if (line.toLowerCase().includes(keyword.toLowerCase())) {
+        console.log(`[Baris ${index + 1}] ${line}`);
+        return true;
+      }
+      return false;
+    });
+
+    console.log(`\n🔍 Ditemukan ${matches.length} baris yang cocok dengan kata kunci "${keyword}".\n`);
+  }
+} else if (command === 'gen-dummy') {
+  // Pastikan baris ini ada di PALING ATAS blok gen-dummy
+  const count = parseInt(args[1]) || 5; 
+  const dummyUsers = [];
+
+  const firstNames = ['Wahyu', 'Budi', 'Siti', 'Rian', 'Dewi', 'Andi'];
+  const roles = ['Developer', 'Designer', 'Data Analyst', 'QA Engineer'];
+
+  for (let i = 1; i <= count; i++) {
+    const name = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const role = roles[Math.floor(Math.random() * roles.length)];
+    const email = `${name.toLowerCase()}${i}@example.com`;
+
+    dummyUsers.push({ id: i, nama: `${name} ${i}`, role: role, email: email });
+  }
+
+  const dummyJson = JSON.stringify(dummyUsers, null, 2);
+  fs.writeFileSync('dummy-data.json', dummyJson, 'utf8');
+
+  console.log(`\n✅ Berhasil membuat ${count} data dummy!`);
+  console.log(`📁 File tersimpan di: dummy-data.json\n`);
 } else {
   console.log(`\n❌ Perintah "${command}" tidak dikenali. Gunakan --help untuk bantuan.\n`);
 }
