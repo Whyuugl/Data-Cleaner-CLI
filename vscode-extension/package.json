@@ -1,0 +1,30 @@
+{
+  "name": "devsanitize-vscode",
+  "displayName": "DevSanitize",
+  "description": "Scan and sanitize the current file locally with DevSanitize.",
+  "version": "0.1.0",
+  "publisher": "devsanitize",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:devsanitize.scanCurrentFile",
+    "onCommand:devsanitize.scrubCurrentFile"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "devsanitize.scanCurrentFile",
+        "title": "DevSanitize: Scan Current File"
+      },
+      {
+        "command": "devsanitize.scrubCurrentFile",
+        "title": "DevSanitize: Scrub Current File"
+      }
+    ]
+  }
+}
