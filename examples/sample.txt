@@ -1,0 +1,3 @@
+Send test credentials to wahyu@example.com only after scrubbing.
+Temporary password: mypassword123
+Standalone JWT: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjF9.abcdefghijk123456789

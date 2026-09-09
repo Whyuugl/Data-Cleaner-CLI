@@ -1,0 +1,5 @@
+user:
+  email: wahyu@example.com
+  phone: 081234567890
+database: mysql://root:secret@localhost/app
+api_key: abc123456789
