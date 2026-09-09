@@ -1,13 +1,32 @@
 {
-  "name": "data-cleaner-cli",
-  "version": "1.0.0",
-  "description": "",
+  "name": "devsanitize",
+  "version": "0.1.0",
+  "description": "Local-first data sanitization tool for developers",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "bin": {
+    "dev-sanitize": "./bin/dev-sanitize.js",
+    "devsanitize": "./bin/dev-sanitize.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs"
+  "files": [
+    "bin",
+    "src",
+    "index.js",
+    "README.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node bin/dev-sanitize.js",
+    "scan": "node bin/dev-sanitize.js scan",
+    "test": "node --test"
+  },
+  "keywords": [
+    "security",
+    "sanitization",
+    "pii",
+    "developer-tools",
+    "cli"
+  ],
+  "license": "MIT"
 }
